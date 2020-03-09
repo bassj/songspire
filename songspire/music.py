@@ -53,12 +53,16 @@ def SearchSongRecords(search_terms = None):
 
     rows = songs.fetchall()
 
-
-
     return rows
 
-def PlayMusicFile(music_file):
-    playsound(music_file)
+def PlayMusicFile(music_file): 
+    mp3 = mutagen.mp3.MP3(song_path) 
+
+    pygame.mixer.quit()
+    pygame.mixer.init(mp3.info.sample_rate)
+    pygame.mixer.music.load(song_path)
+    pygame.mixer.music.play()
+
 
 def QuitCommand():
     global is_running
@@ -78,7 +82,9 @@ def SearchCommand(args):
     for index, video in enumerate(results):
         print("[%d] %s" % (index, video["title"]))
 
-def DownloadCommand(args):
+    print(home_path)
+    print(cache_path)
+def DownloadCommand(asongs_path, songpathrgs):
     
     index = int(args[0])
 
@@ -152,13 +158,7 @@ def PlaySongCommand(args):
         
         song_path = os.path.join(songs_path, song_file)
 
-        mp3 = mutagen.mp3.MP3(song_path) 
-
-        pygame.mixer.quit()
-        pygame.mixer.init(mp3.info.sample_rate)
-        pygame.mixer.music.load(song_path)
-        pygame.mixer.music.play()
-    
+        PlayMusicFile(song_path)    
 
 def ProcessCommand(command, args):    
     if (command == "q"):
