@@ -2,6 +2,7 @@ from songstore import SongStore
 from commandprocessor import CommandProcessor
 from songqueue import SongQueue
 from songplayer import SongPlayer
+from uicontroller import UiController
 from quitcommand import QuitCommand
 from searchcommand import SearchCommand
 from downloadcommand import DownloadCommand
@@ -22,6 +23,7 @@ database_path = os.path.join(home_path, "songstore.db")
 cache_path = os.path.join(home_path, "cache/")
 songs_path = os.path.join(home_path, "songs/");
 
+ui_controller = None
 song_store = None
 command_processor = None
 context = {}
@@ -71,8 +73,15 @@ def InitSongPlayer():
     global song_player
     song_player = SongPlayer()
 
+def InitUiController():
+    global ui_controller
+    ui_controller = UiController(context, command_processor)
+
 def DestroySongPlayer():
     song_player.Destroy()
+
+def DestroyUiController():
+    ui_controller.Destroy()
 
 def CreateCommands():
     command_processor.AddCommand(QuitCommand(command_processor))
@@ -90,19 +99,29 @@ def Init():
     InitCmdProcessor()
     InitDownloadWorker()
     InitSongPlayer()
+    InitUiController()
 
     CreateCommands()
 
+    ui_controller.Create()
+
     while not command_processor.ShouldQuit():
-        if not song_queue.Empty():
-           song = song_queue.Get()
-           print("Queuing %s" % song)
-           song_player.PlaySong(song)
+        #Update Music Player
+        #song_player.Update()
+        #Update UI
+        ui_controller.Update()
 
-        command_string = input(">")
+    #while not command_processor.ShouldQuit():
+    #    if not song_queue.Empty():
+    #       song = song_queue.Get()
+    #       print("Queuing %s" % song)
+    #       song_player.PlaySong(song)
+
+     #   command_string = input(">")
          
-        command_processor.ProcessCommand(command_string);
+      #  command_processor.ProcessCommand(command_string);
 
+    DestroyUiController()
     DestroySongPlayer()
     CleanupDownloadWorker()
     DestroySongStore()
