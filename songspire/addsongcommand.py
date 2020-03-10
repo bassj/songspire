@@ -11,7 +11,11 @@ class AddSongCommand:
         return ["add", "a", "c", "catalog"]
 
     def Handle(self, command_string):
-       
+
+        if not self.context["result_type"] == "MUSIC_FILES":
+            print("Invalid result type")
+            return
+
         split_command = command_string.split(" ")
 
         index = int(split_command[1])
