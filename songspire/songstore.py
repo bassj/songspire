@@ -24,7 +24,7 @@ class SongStore:
 
         self.database.commit()
 
-    def SearchSongRecords(search_terms = None):
+    def SearchSongRecords(self, earch_terms = None):
         self.cursor.execute("SELECT * FROM songs")
         
         rows = self.cursor.fetchall()
